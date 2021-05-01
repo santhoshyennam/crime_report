@@ -1,5 +1,8 @@
 package com.crime_reporting
 
+import android.app.AlertDialog
+import android.app.ProgressDialog
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -43,8 +46,22 @@ class MyProfile : AppCompatActivity() {
 
 
         logout.setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
-            startActivity(Intent(this@MyProfile,LoginActivity::class.java))
+            var pd = AlertDialog.Builder(this)
+            pd.setTitle("Do you want to logout?")
+                .setPositiveButton("yes", DialogInterface.OnClickListener()
+                { dialogInterface: DialogInterface, i: Int ->
+                    FirebaseAuth.getInstance().signOut()
+                    startActivity(Intent(this@MyProfile,LoginActivity::class.java))
+                    finish()
+                })
+                .setNegativeButton(
+                    "no",DialogInterface.OnClickListener()
+                    { dialogInterface: DialogInterface, i: Int ->
+                        dialogInterface.cancel()
+                    }
+                )
+            pd.show()
+
 
 
         }

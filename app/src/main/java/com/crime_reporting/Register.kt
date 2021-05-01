@@ -7,6 +7,9 @@ import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import com.crime_reporting.classes.UserProfile
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_register.*
@@ -72,13 +75,28 @@ class Register : AppCompatActivity() {
                         var uid = FirebaseAuth.getInstance().uid
                         var dbase = FirebaseDatabase.getInstance().getReference("people")
                             .child(uid.toString()).child("myprofile")
-                        dbase.child("fullname").setValue(n)
-                        dbase.child("email").setValue(e)
-                        dbase.child("mobile").setValue(m)
+                        var user = UserProfile(n,e,m)
+                        dbase.setValue(user).addOnCompleteListener(
+                            object : OnCompleteListener<Void>
+                            {
+                                override fun onComplete(p0: Task<Void>) {
+                                    if(p0.isSuccessful)
+                                    {
+                                        Toast.makeText(this@Register, "Success", Toast.LENGTH_LONG).show()
+                                        startActivity(Intent(this@Register, MainActivity::class.java))
+                                        finish()
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(this@Register, "There was  problem,please try again.", Toast.LENGTH_LONG).show()
+
+                                    }
+                                }
+
+                            }
+                        )
                         //dbase.child("notificationtime").setValue(curTime)
-                        Toast.makeText(this@Register, "Success", Toast.LENGTH_LONG)
-                        startActivity(Intent(this@Register, MainActivity::class.java))
-                        finish()
+
 
 
                     } else {
